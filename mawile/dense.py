@@ -31,10 +31,6 @@ def init_default_model():
     return model
 
 
-def boost_to_multiplier(boost: np.array) -> np.array:
-    return np.power(2 + np.abs(boost), np.sign(boost))
-
-
 def reward_computing_helper(
     battle: AbstractBattle,
     weight_victory: float = 30.0,
@@ -44,13 +40,11 @@ def reward_computing_helper(
     weight_boosts: float = 1.0,
 ) -> float:
     def evaluate_unit(unit: Pokemon) -> float:
-        score_health = unit.current_hp_fraction * weight_health
+        score_health = weight_health * unit.current_hp_fraction
+        score_boosts = weight_boosts * sum(unit.boosts.values())
 
         score_fainted = -weight_fainted if unit.fainted else 0
         score_status = -weight_status if unit.status else 0
-
-        boosts = np.fromiter(unit.boosts.values(), dtype=float)
-        score_boosts = weight_boosts * np.sum(boost_to_multiplier(boosts))
 
         return score_health + score_fainted + score_status + score_boosts
 
