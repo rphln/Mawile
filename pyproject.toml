@@ -1,0 +1,25 @@
+[tool.isort]
+profile = "black"
+
+[tool.poetry]
+name = "pokeai"
+version = "0.1.0"
+description = ""
+authors = ["Raphael Nepomuceno <58113327+rphln@users.noreply.github.com>"]
+license = "MIT"
+
+[tool.poetry.dependencies]
+python = "^3.8"
+poke-env = "^0.4.15"
+scikit-learn = "^0.24.2"
+tabulate = "^0.8.9"
+tensorflow = "^2.5.0"
+
+[tool.poetry.dev-dependencies]
+black = {version = "^21.5b2", allow-prereleases = true}
+isort = "^5.8.0"
+autoflake = "^1.4"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
