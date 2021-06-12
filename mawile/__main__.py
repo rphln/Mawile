@@ -85,13 +85,13 @@ async def main():
     checkpoint_callback = ModelCheckpoint(MODEL_PATH, save_weights_only=True)
 
     players = [
-        GreedyPlayer(),
-        RandomPlayer(),
-        DenseQPlayer(shared_memory, shared_model, exploration_rate=0.99),
-        DenseQPlayer(shared_memory, shared_model, exploration_rate=0.95),
-        DenseQPlayer(shared_memory, shared_model, exploration_rate=0.90),
-        DenseQPlayer(shared_memory, shared_model, exploration_rate=0.80),
-        DenseQPlayer(shared_memory, shared_model, exploration_rate=0.50),
+        GreedyPlayer(max_concurrent_battles=0),
+        RandomPlayer(max_concurrent_battles=0),
+        DenseQPlayer(shared_memory, shared_model, exploration_rate=0.01),
+        DenseQPlayer(shared_memory, shared_model, exploration_rate=0.05),
+        DenseQPlayer(shared_memory, shared_model, exploration_rate=0.10),
+        DenseQPlayer(shared_memory, shared_model, exploration_rate=0.20),
+        DenseQPlayer(shared_memory, shared_model, exploration_rate=0.40),
     ]
 
     statistics = Counter()
