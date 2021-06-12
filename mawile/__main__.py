@@ -8,9 +8,9 @@ from typing import Tuple
 os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
 
 import numpy as np
-from keras.callbacks import ModelCheckpoint
 from poke_env.player.random_player import RandomPlayer
 from poke_env.player.utils import cross_evaluate
+from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
 
 from mawile.dense import DenseQPlayer, init_default_model
 from mawile.players import NaivePlayer, forget, memory_to_transitions
@@ -66,7 +66,8 @@ async def main():
     else:
         print("Using the saved model.")
 
-    checkpoint_callback = ModelCheckpoint(MODEL_PATH, save_weights_only=True)
+    checkpoint = ModelCheckpoint(MODEL_PATH, save_weights_only=True)
+    early_stop = EarlyStopping(monitor="loss", patience=5)
 
     players = [
         NaivePlayer(max_concurrent_battles=0),
@@ -88,8 +89,8 @@ async def main():
         await cross_evaluate([pre_train_player, pre_train_against], n_challenges=10)
         forget(shared_memory, retain=200)
 
-        x_train, y_train = memory_to_dataset(shared_model, shared_memory)
-        shared_model.fit(x_train, y_train, epochs=10, callbacks=[checkpoint_callback])
+        x, y = memory_to_dataset(shared_model, shared_memory)
+        shared_model.fit(x, y, epochs=100, callbacks=[checkpoint, early_stop])
 
     statistics = Counter()
 
@@ -106,8 +107,8 @@ async def main():
 
         pprint(statistics)
 
-        x_train, y_train = memory_to_dataset(shared_model, shared_memory)
-        shared_model.fit(x_train, y_train, epochs=10, callbacks=[checkpoint_callback])
+        x, y = memory_to_dataset(shared_model, shared_memory)
+        shared_model.fit(x, y, epochs=100, callbacks=[checkpoint, early_stop])
 
 
 if __name__ == "__main__":
