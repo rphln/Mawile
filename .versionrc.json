@@ -1,0 +1,8 @@
+{
+  "releaseCommitMessageFormat": "chore: Bump version to `{{currentTag}}`.",
+  "types": [
+    { "type": "feat", "section": "Major changes" },
+    { "type": "fix", "section": "Minor changes" },
+    { "type": "chore", "section": "Other changes" }
+  ]
+}
