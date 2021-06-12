@@ -2,6 +2,33 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.0.0](https://github.com/rphln/Mawile/compare/v1.0.0...v2.0.0) (2021-06-12)
+
+
+### ⚠ BREAKING CHANGES
+
+* **MemoryPlayer:** Refactor the memory handler.
+
+### Other changes
+
+* Add `.versionrc`. ([2f2f376](https://github.com/rphln/Mawile/commit/2f2f376df14fe05b81939363a254d5343afeaee3))
+* Update `.gitignore`. ([c5534d1](https://github.com/rphln/Mawile/commit/c5534d182f41675b1d0cf3b0b28b98d7687dccd4))
+
+
+### Minor changes
+
+* **Common:** Move `reward_computing_helper` to `common.py`. ([c46babc](https://github.com/rphln/Mawile/commit/c46babc4a40bdc63640e3ebb7a168fe0d568d276))
+* **MemoryPlayer:** Add more typing information. ([d9048bc](https://github.com/rphln/Mawile/commit/d9048bcd6deb8c3d4f4b325152bc52b2b1d31c99))
+* **NaivePlayer:** Move to `players.py`. ([eb2addc](https://github.com/rphln/Mawile/commit/eb2addc6b46e15120820d9e8c994ef60f98ae631))
+* **Train:** Save the model as `checkpoint.keras`. ([d82fd9b](https://github.com/rphln/Mawile/commit/d82fd9bc5978a5b2d4b5dbeaea0fc6301c70d19a))
+* **Train:** Use new players on pre-training. ([525c126](https://github.com/rphln/Mawile/commit/525c1260d1bc83b31dee7bdcd5e78e0fbb736826))
+
+
+### Major changes
+
+* **MemoryPlayer:** Refactor the memory handler. ([be8ce84](https://github.com/rphln/Mawile/commit/be8ce84eac890d1c36914ad1f2d0ec57e823b87b))
+* **MemoryPlayer:** Use a named tuple for transitions. ([5fd3a3f](https://github.com/rphln/Mawile/commit/5fd3a3f79e150400da055a960384caeca948c757))
+
 ## 1.0.0 (2021-06-12)
 
 
