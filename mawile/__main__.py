@@ -13,7 +13,7 @@ from poke_env.player.random_player import RandomPlayer
 from poke_env.player.utils import cross_evaluate
 
 from mawile.dense import DenseQPlayer, init_default_model
-from mawile.players import MemoryPlayer, NaivePlayer
+from mawile.players import NaivePlayer, forget, memory_to_transitions
 
 LOG_LEVEL = os.environ.get("LOG_LEVEL", logging.WARNING)
 MODEL_PATH = os.environ.get("MODEL_PATH", "var/checkpoint.keras")
@@ -23,7 +23,7 @@ BATCH_SIZE = 50_000
 
 
 def memory_to_dataset(model, memory) -> Tuple[np.array, np.array]:
-    transitions = list(MemoryPlayer.memory_to_transitions(memory))
+    transitions = memory_to_transitions(memory)
 
     x_train = []
     y_train = []
@@ -86,7 +86,7 @@ async def main():
         pre_train_player.exploration_rate = max(0.05, 0.6 ** it)
 
         await cross_evaluate([pre_train_player, pre_train_against], n_challenges=10)
-        MemoryPlayer.forget(shared_memory, retain=200)
+        forget(shared_memory, retain=200)
 
         x_train, y_train = memory_to_dataset(shared_model, shared_memory)
         shared_model.fit(x_train, y_train, epochs=10, callbacks=[checkpoint_callback])
@@ -96,7 +96,7 @@ async def main():
     # Round-robin training.
     while True:
         cross_evaluation = await cross_evaluate(players, n_challenges=1)
-        MemoryPlayer.forget(shared_memory, retain=200)
+        forget(shared_memory, retain=200)
 
         statistics += {
             (first, second): win_rate or 0

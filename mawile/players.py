@@ -22,8 +22,31 @@ from poke_env.player.player import Player
 TState = TypeVar("TState")
 TAction = TypeVar("TAction")
 
-
 Memory: Type[DefaultDict[AbstractBattle, List[Observation[TState, TAction]]]]
+
+
+def memory_to_transitions_lazy(memory: Memory) -> Iterable[Transition]:
+    for battle, steps in memory.items():
+        for n, (step, step_next) in enumerate(zip(steps, steps[1:])):
+            state, action, score, _ = step
+            state_next, _, score_next, is_terminal = step_next
+
+            reward = score_next - score
+
+            yield Transition(state, action, reward, state_next, is_terminal)
+
+
+def memory_to_transitions(memory: Memory) -> List[Transition]:
+    return list(memory_to_transitions_lazy(memory))
+
+
+def forget_lazy(memory: Memory, retain: int) -> Iterable[Observation]:
+    for key in list(memory.keys())[:-retain]:
+        yield memory.pop(key)
+
+
+def forget(memory: Memory, retain: int) -> List[Observation]:
+    return list(forget_lazy(memory, retain))
 
 
 class Observation(Generic[TState, TAction], NamedTuple):
@@ -79,26 +102,6 @@ class MemoryPlayer(Generic[TState, TAction], Player, ABC):
     @abstractmethod
     def action_to_move(self, action: TAction, battle: AbstractBattle) -> BattleOrder:
         raise NotImplementedError()
-
-    @classmethod
-    def memory_to_transitions(cls, memory: Memory) -> Iterable[Transition]:
-        for battle, steps in memory.items():
-            for n, (step, step_next) in enumerate(zip(steps, steps[1:])):
-                state, action, score, _ = step
-                state_next, _, score_next, is_terminal = step_next
-
-                reward = score_next - score
-
-                yield Transition(state, action, reward, state_next, is_terminal)
-
-    @classmethod
-    def forget(cls, memory: Memory, retain: int) -> List[Observation]:
-        return list(cls.forget_lazy(memory, retain))
-
-    @classmethod
-    def forget_lazy(cls, memory: Memory, retain: int) -> Iterable[Observation]:
-        for key in list(memory.keys())[:-retain]:
-            yield memory.pop(key)
 
 
 class NaivePlayer(Player):
