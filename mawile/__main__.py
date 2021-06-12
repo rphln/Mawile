@@ -71,12 +71,12 @@ async def main():
 
     players = [
         NaivePlayer(max_concurrent_battles=0),
+        DenseQPlayer(shared_memory, shared_model),
+        DenseQPlayer(shared_memory, shared_model),
+        DenseQPlayer(shared_memory, shared_model),
+        DenseQPlayer(shared_memory, shared_model),
+        DenseQPlayer(shared_memory, shared_model),
         RandomPlayer(max_concurrent_battles=0),
-        DenseQPlayer(shared_memory, shared_model, exploration_rate=0.01),
-        DenseQPlayer(shared_memory, shared_model, exploration_rate=0.05),
-        DenseQPlayer(shared_memory, shared_model, exploration_rate=0.10),
-        DenseQPlayer(shared_memory, shared_model, exploration_rate=0.20),
-        DenseQPlayer(shared_memory, shared_model, exploration_rate=0.40),
     ]
 
     statistics = Counter()
