@@ -82,9 +82,7 @@ async def main():
     else:
         print("Using the saved model.")
 
-    checkpoint_callback = ModelCheckpoint(
-        MODEL_PATH, save_best_only=True, save_weights_only=True
-    )
+    checkpoint_callback = ModelCheckpoint(MODEL_PATH, save_weights_only=True)
 
     players = [
         GreedyPlayer(),
