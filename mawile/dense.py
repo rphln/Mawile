@@ -10,7 +10,6 @@ from tensorflow.python.keras.activations import relu, swish
 from tensorflow.python.keras.layers import Dense
 from tensorflow.python.keras.optimizer_v2.adam import Adam
 
-from mawile.common import reward_computing_helper
 from mawile.encode import encode_moves, encode_unit
 from mawile.players import MemoryPlayer, TAction
 
@@ -45,16 +44,6 @@ class DenseQPlayer(MemoryPlayer[np.array, np.array]):
 
     def __post_init__(self):
         super().__post_init__()
-
-    def battle_to_score(self, battle: AbstractBattle) -> float:
-        return reward_computing_helper(
-            battle,
-            weight_victory=1.0,
-            weight_fainted=0.0,
-            weight_health=0.0,
-            weight_status=0.0,
-            weight_boosts=0.0,
-        )
 
     def battle_to_state(self, battle: AbstractBattle) -> np.array:
         moves = encode_moves(battle.available_moves, battle.opponent_active_pokemon)

@@ -19,6 +19,8 @@ from poke_env.environment.move import Move
 from poke_env.player.battle_order import BattleOrder
 from poke_env.player.player import Player
 
+from mawile.common import reward_computing_helper
+
 TState = TypeVar("TState")
 TAction = TypeVar("TAction")
 
@@ -87,9 +89,15 @@ class MemoryPlayer(Generic[TState, TAction], Player, ABC):
 
         self.memory[battle].append(Observation(state, None, score, True))
 
-    @abstractmethod
     def battle_to_score(self, battle: AbstractBattle) -> float:
-        raise NotImplementedError()
+        return reward_computing_helper(
+            battle,
+            weight_victory=1.0,
+            weight_fainted=0.0,
+            weight_health=0.0,
+            weight_status=0.0,
+            weight_boosts=0.0,
+        )
 
     @abstractmethod
     def battle_to_state(self, battle: AbstractBattle) -> TState:
