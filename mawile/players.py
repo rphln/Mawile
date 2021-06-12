@@ -15,6 +15,7 @@ from typing import (
 )
 
 from poke_env.environment.abstract_battle import AbstractBattle
+from poke_env.environment.move import Move
 from poke_env.player.battle_order import BattleOrder
 from poke_env.player.player import Player
 
@@ -90,3 +91,21 @@ class MemoryPlayer(Generic[TState, TAction], Player, ABC):
     def forget_lazy(cls, memory: Memory, retain: int) -> Iterable:
         for key in list(memory.keys())[:-retain]:
             yield memory.pop(key)
+
+
+class NaivePlayer(Player):
+    def choose_move(self, battle):
+        if not battle.available_moves:
+            return self.choose_random_move(battle)
+
+        def evaluate_move(move: Move) -> float:
+            return (
+                move.accuracy
+                * move.base_power
+                * move.type.damage_multiplier(
+                    battle.opponent_active_pokemon.type_1,
+                    battle.opponent_active_pokemon.type_2,
+                )
+            )
+
+        return self.create_order(max(battle.available_moves, key=evaluate_move))

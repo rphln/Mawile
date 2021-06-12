@@ -9,37 +9,17 @@ os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
 
 import numpy as np
 from keras.callbacks import ModelCheckpoint
-from poke_env.environment.move import Move
-from poke_env.player.player import Player
 from poke_env.player.random_player import RandomPlayer
 from poke_env.player.utils import cross_evaluate
 
 from mawile.dense import DenseQPlayer, init_default_model
-from mawile.players import MemoryPlayer
+from mawile.players import MemoryPlayer, NaivePlayer
 
 LOG_LEVEL = os.environ.get("LOG_LEVEL", logging.WARNING)
 MODEL_PATH = os.environ.get("MODEL_PATH", "var/checkpoint.keras")
 
 GAMMA = 0.95
 BATCH_SIZE = 50_000
-
-
-class GreedyPlayer(Player):
-    def choose_move(self, battle):
-        if not battle.available_moves:
-            return self.choose_random_move(battle)
-
-        def evaluate_move(move: Move) -> float:
-            return (
-                move.accuracy
-                * move.base_power
-                * move.type.damage_multiplier(
-                    battle.opponent_active_pokemon.type_1,
-                    battle.opponent_active_pokemon.type_2,
-                )
-            )
-
-        return self.create_order(max(battle.available_moves, key=evaluate_move))
 
 
 def memory_to_dataset(model, memory) -> Tuple[np.array, np.array]:
@@ -85,7 +65,7 @@ async def main():
     checkpoint_callback = ModelCheckpoint(MODEL_PATH, save_weights_only=True)
 
     players = [
-        GreedyPlayer(max_concurrent_battles=0),
+        NaivePlayer(max_concurrent_battles=0),
         RandomPlayer(max_concurrent_battles=0),
         DenseQPlayer(shared_memory, shared_model, exploration_rate=0.01),
         DenseQPlayer(shared_memory, shared_model, exploration_rate=0.05),
@@ -95,7 +75,7 @@ async def main():
     ]
 
     pre_train_player = DenseQPlayer(shared_memory, shared_model)
-    pre_train_against = GreedyPlayer(max_concurrent_battles=0)
+    pre_train_against = NaivePlayer(max_concurrent_battles=0)
 
     # Pre-training step.
     for it in range(10):
