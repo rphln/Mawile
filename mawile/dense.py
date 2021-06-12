@@ -62,7 +62,8 @@ class DenseQPlayer(MemoryPlayer[np.array, np.array]):
     """
 
     model: Sequential = field(default_factory=init_default_model)
-    exploration_rate: float = 0.95
+
+    exploration_rate: float = 0.05
 
     INPUT_SIZE: ClassVar[int] = 6772
     ACTION_SPACE: ClassVar[int] = 22
