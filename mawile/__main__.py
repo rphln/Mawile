@@ -38,12 +38,12 @@ def memory_to_dataset(model, memory) -> Tuple[np.array, np.array]:
     for (transition, q_values, q_values_next) in zip(
         transitions, batch_q_values, batch_q_values_next
     ):
-        state, action, reward, state_next, terminal = transition
+        state, action, reward, state_next, is_terminal = transition
 
-        if terminal:
+        if is_terminal:
             q_update = reward
         else:
-            q_update = reward + GAMMA * np.argmax(q_values_next)
+            q_update = reward + GAMMA * np.amax(q_values_next)
 
         q_values[action] = q_update
 
