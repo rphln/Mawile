@@ -94,8 +94,8 @@ async def main():
         DenseQPlayer(shared_memory, shared_model, exploration_rate=0.40),
     ]
 
-    pre_train_player = players[2]
-    pre_train_against = players[0]
+    pre_train_player = DenseQPlayer(shared_memory, shared_model)
+    pre_train_against = GreedyPlayer(max_concurrent_battles=0)
 
     # Pre-training step.
     for it in range(10):
