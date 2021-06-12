@@ -94,6 +94,19 @@ async def main():
         DenseQPlayer(shared_memory, shared_model, exploration_rate=0.40),
     ]
 
+    pre_train_player = players[2]
+    pre_train_against = players[0]
+
+    # Pre-training step.
+    for it in range(10):
+        pre_train_player.exploration_rate = max(0.05, 0.6 ** it)
+
+        await cross_evaluate([pre_train_player, pre_train_against], n_challenges=10)
+        MemoryPlayer.forget(shared_memory, retain=200)
+
+        x_train, y_train = memory_to_dataset(shared_model, shared_memory)
+        shared_model.fit(x_train, y_train, epochs=10, callbacks=[checkpoint_callback])
+
     statistics = Counter()
 
     # Round-robin training.
