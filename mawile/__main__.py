@@ -23,23 +23,27 @@ BATCH_SIZE = 50_000
 
 
 def memory_to_dataset(model, memory) -> Tuple[np.array, np.array]:
-    batch = list(MemoryPlayer.memory_to_transitions(memory))
+    transitions = list(MemoryPlayer.memory_to_transitions(memory))
 
     x_train = []
     y_train = []
 
-    batch_q_values = model.predict(np.vstack([step[0] for step in batch]))
-    batch_next_q_values = model.predict(np.vstack([step[3] for step in batch]))
+    batch_q_values = model.predict(
+        np.vstack([transition.state for transition in transitions])
+    )
+    batch_q_values_next = model.predict(
+        np.vstack([transition.state_next for transition in transitions])
+    )
 
-    for (
-        (state, action, reward, state_next, terminal),
-        q_values,
-        next_q_values,
-    ) in zip(batch, batch_q_values, batch_next_q_values):
+    for (transition, q_values, q_values_next) in zip(
+        transitions, batch_q_values, batch_q_values_next
+    ):
+        state, action, reward, state_next, terminal = transition
+
         if terminal:
             q_update = reward
         else:
-            q_update = reward + GAMMA * np.argmax(next_q_values)
+            q_update = reward + GAMMA * np.argmax(q_values_next)
 
         q_values[action] = q_update
 

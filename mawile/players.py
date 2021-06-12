@@ -33,6 +33,14 @@ class Observation(Generic[TState, TAction], NamedTuple):
     is_terminal: bool
 
 
+class Transition(Generic[TState, TAction], NamedTuple):
+    state: TState
+    action: TAction
+    reward: float
+    state_next: TState
+    is_terminal: bool
+
+
 @dataclass
 class MemoryPlayer(Generic[TState, TAction], Player, ABC):
     memory: Memory = field(default_factory=lambda: defaultdict(list))
@@ -73,7 +81,7 @@ class MemoryPlayer(Generic[TState, TAction], Player, ABC):
         raise NotImplementedError()
 
     @classmethod
-    def memory_to_transitions(cls, memory: Memory) -> Iterable:
+    def memory_to_transitions(cls, memory: Memory) -> Iterable[Transition]:
         for battle, steps in memory.items():
             for n, (step, step_next) in enumerate(zip(steps, steps[1:])):
                 state, action, score, _ = step
@@ -81,7 +89,7 @@ class MemoryPlayer(Generic[TState, TAction], Player, ABC):
 
                 reward = score_next - score
 
-                yield state, action, reward, state_next, is_terminal
+                yield Transition(state, action, reward, state_next, is_terminal)
 
     @classmethod
     def forget(cls, memory: Memory, retain: int) -> List:
