@@ -77,7 +77,7 @@ async def main():
 
     try:
         shared_model.load_weights(MODEL_PATH)
-    except IOError:
+    except:
         print("Using a fresh model.")
     else:
         print("Using the saved model.")
