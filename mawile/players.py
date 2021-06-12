@@ -36,6 +36,9 @@ class Observation(Generic[TState, TAction], NamedTuple):
 class MemoryPlayer(Generic[TState, TAction], Player, ABC):
     memory: Memory = field(default_factory=lambda: defaultdict(list))
 
+    def __post_init__(self):
+        super().__init__(max_concurrent_battles=0)
+
     def choose_move(self, battle: AbstractBattle) -> BattleOrder:
         state = self.battle_to_state(battle)
         score = self.battle_to_score(battle)

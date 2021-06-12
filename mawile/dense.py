@@ -6,7 +6,6 @@ from poke_env.environment.abstract_battle import AbstractBattle
 from poke_env.environment.pokemon import Pokemon
 from poke_env.player.battle_order import BattleOrder
 from poke_env.player.env_player import Gen8EnvSinglePlayer
-from poke_env.player.player import Player
 from tensorflow.python.keras import Sequential
 from tensorflow.python.keras.activations import relu, swish
 from tensorflow.python.keras.layers import Dense
@@ -69,7 +68,7 @@ class DenseQPlayer(MemoryPlayer[np.array, np.array]):
     ACTION_SPACE: ClassVar[int] = 22
 
     def __post_init__(self):
-        Player.__init__(self, max_concurrent_battles=0)
+        super().__post_init__()
 
     def battle_to_score(self, battle: AbstractBattle) -> float:
         return reward_computing_helper(
