@@ -12,7 +12,6 @@ license = "MIT"
 python = "^3.8"
 poke-env = "^0.4.15"
 scikit-learn = "^0.24.2"
-tabulate = "^0.8.9"
 tensorflow = "^2.5.0"
 
 [tool.poetry.dev-dependencies]

@@ -1,10 +1,9 @@
 import asyncio
 import logging
 import os
-from collections import defaultdict
+from collections import Counter, defaultdict
+from pprint import pprint
 from typing import Tuple
-
-from tabulate import tabulate
 
 os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
 
@@ -97,15 +96,20 @@ async def main():
         DenseQPlayer(shared_memory, shared_model, exploration_rate=0.50),
     ]
 
+    statistics = Counter()
+
+    # Round-robin training.
     while True:
         cross_evaluation = await cross_evaluate(players, n_challenges=1)
         MemoryPlayer.forget(shared_memory, retain=200)
 
-        table = [[""] + [p.username for p in players]]
-        for p_1, results in cross_evaluation.items():
-            table.append([p_1] + [cross_evaluation[p_1][p_2] for p_2 in results])
+        statistics += {
+            (first, second): win_rate or 0
+            for first, matches in cross_evaluation.items()
+            for second, win_rate in matches.items()
+        }
 
-        print(tabulate(table))
+        pprint(statistics)
 
         x_train, y_train = memory_to_dataset(shared_model, shared_memory)
         shared_model.fit(x_train, y_train, callbacks=[checkpoint_callback])

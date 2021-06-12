@@ -669,7 +669,7 @@ python-versions = "*"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "cba5c4cdfb5f7dbd2edb2be44bce430f5a5c51a2f72eb3fbc93125f9bcd0e7b1"
+content-hash = "e41358931c91c6f485e7b5b9a4649a3babb8d1c19848719a8f02a0794c2866ec"
 
 [metadata.files]
 absl-py = [
