@@ -27,7 +27,7 @@ Memory: Type[DefaultDict[AbstractBattle, List[Observation[TState, TAction]]]]
 
 def memory_to_transitions_lazy(memory: Memory) -> Iterable[Transition]:
     for battle, steps in memory.items():
-        for n, (step, step_next) in enumerate(zip(steps, steps[1:])):
+        for step, step_next in zip(steps, steps[1:]):
             state, action, score, _ = step
             state_next, _, score_next, is_terminal = step_next
 
