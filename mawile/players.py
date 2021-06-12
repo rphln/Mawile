@@ -92,11 +92,11 @@ class MemoryPlayer(Generic[TState, TAction], Player, ABC):
                 yield Transition(state, action, reward, state_next, is_terminal)
 
     @classmethod
-    def forget(cls, memory: Memory, retain: int) -> List:
+    def forget(cls, memory: Memory, retain: int) -> List[Observation]:
         return list(cls.forget_lazy(memory, retain))
 
     @classmethod
-    def forget_lazy(cls, memory: Memory, retain: int) -> Iterable:
+    def forget_lazy(cls, memory: Memory, retain: int) -> Iterable[Observation]:
         for key in list(memory.keys())[:-retain]:
             yield memory.pop(key)
 
