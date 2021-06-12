@@ -81,15 +81,15 @@ async def main():
 
     statistics = Counter()
 
-    # Round-robin training.
     while True:
         cross_evaluation = await cross_evaluate(players, n_challenges=1)
         forget(shared_memory, retain=200)
 
         statistics += {
-            (first, second): win_rate or 0
+            (first, second): win_rate
             for first, matches in cross_evaluation.items()
             for second, win_rate in matches.items()
+            if win_rate is not None
         }
 
         pprint(statistics)
