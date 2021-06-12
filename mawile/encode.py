@@ -70,10 +70,13 @@ def encode_species(species: Iterable[str]) -> np.ndarray:
     )
 
 
-def encode_unit(pokemon: Pokemon) -> np.ndarray:
+def encode_unit(pokemon: Optional[Pokemon]) -> np.ndarray:
     """
     Converts an unit to a multi-dimensional array representation.
     """
+
+    if not pokemon:
+        return np.zeros(1661)
 
     species = encode_species([pokemon.species])
     ability = encode_ability([pokemon.ability])
@@ -86,7 +89,15 @@ def encode_unit(pokemon: Pokemon) -> np.ndarray:
     boosts = np.fromiter(pokemon.boosts.values(), float).reshape(1, -1)
     scores = np.fromiter(pokemon.base_stats.values(), float).reshape(1, -1)
 
-    return np.hstack((species, scores, types, ability, status, boosts))
+    return np.hstack((species, scores, types, ability, status, boosts)).flatten()
+
+
+def encode_units(units: Iterable[Optional[Pokemon]]) -> np.ndarray:
+    """
+    Converts a sequence of units to a multi-dimensional array representation.
+    """
+
+    return np.vstack([encode_unit(unit) for unit in pad(units, to_length=6)])
 
 
 def encode_move(move: Optional[Move], opponent: Pokemon) -> np.array:

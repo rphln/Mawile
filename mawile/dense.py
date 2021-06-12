@@ -10,7 +10,7 @@ from tensorflow.python.keras.activations import relu, swish
 from tensorflow.python.keras.layers import Dense
 from tensorflow.python.keras.optimizer_v2.adam import Adam
 
-from mawile.encode import encode_moves, encode_unit
+from mawile.encode import encode_moves, encode_unit, encode_units
 from mawile.players import MemoryPlayer, TAction
 
 LEARNING_RATE = 0.001
@@ -39,7 +39,7 @@ class DenseQPlayer(MemoryPlayer[np.array, np.array]):
 
     exploration_rate: float = 0.05
 
-    INPUT_SIZE: ClassVar[int] = 6772
+    INPUT_SIZE: ClassVar[int] = 16738
     ACTION_SPACE: ClassVar[int] = 22
 
     def __post_init__(self):
@@ -48,8 +48,10 @@ class DenseQPlayer(MemoryPlayer[np.array, np.array]):
     def battle_to_state(self, battle: AbstractBattle) -> np.array:
         moves = encode_moves(battle.available_moves, battle.opponent_active_pokemon)
 
-        (player,) = encode_unit(battle.active_pokemon)
-        (opponent,) = encode_unit(battle.opponent_active_pokemon)
+        player = encode_unit(battle.active_pokemon)
+        opponent = encode_unit(battle.opponent_active_pokemon)
+
+        team = encode_units(battle.available_switches).flatten()
 
         player_remaining = np.count_nonzero(
             unit.fainted for unit in battle.team.values()
@@ -59,7 +61,7 @@ class DenseQPlayer(MemoryPlayer[np.array, np.array]):
         )
 
         return np.hstack(
-            [player, opponent, player_remaining, opponent_remaining, moves]
+            [player, opponent, team, player_remaining, opponent_remaining, moves]
         )
 
     def state_to_action(self, state: np.array, battle: AbstractBattle) -> np.array:
