@@ -3,7 +3,6 @@ from typing import ClassVar
 
 import numpy as np
 from poke_env.environment.abstract_battle import AbstractBattle
-from poke_env.environment.pokemon import Pokemon
 from poke_env.player.battle_order import BattleOrder
 from poke_env.player.env_player import Gen8EnvSinglePlayer
 from tensorflow.python.keras import Sequential
@@ -11,6 +10,7 @@ from tensorflow.python.keras.activations import relu, swish
 from tensorflow.python.keras.layers import Dense
 from tensorflow.python.keras.optimizer_v2.adam import Adam
 
+from mawile.common import reward_computing_helper
 from mawile.encode import encode_moves, encode_unit
 from mawile.players import MemoryPlayer, TAction
 
@@ -28,30 +28,6 @@ def init_default_model():
     model.compile(loss="mse", optimizer=Adam(learning_rate=LEARNING_RATE))
 
     return model
-
-
-def reward_computing_helper(
-    battle: AbstractBattle,
-    weight_victory: float = 30.0,
-    weight_fainted: float = 5.0,
-    weight_health: float = 5.0,
-    weight_status: float = 1.0,
-    weight_boosts: float = 1.0,
-) -> float:
-    def evaluate_unit(unit: Pokemon) -> float:
-        score_health = weight_health * unit.current_hp_fraction
-        score_boosts = weight_boosts * sum(unit.boosts.values())
-
-        score_fainted = -weight_fainted if unit.fainted else 0
-        score_status = -weight_status if unit.status else 0
-
-        return score_health + score_fainted + score_status + score_boosts
-
-    score = +weight_victory if battle.won else -weight_victory if battle.lost else 0
-    score += sum(map(evaluate_unit, battle.team.values()))
-    score -= sum(map(evaluate_unit, battle.opponent_team.values()))
-
-    return score
 
 
 @dataclass
