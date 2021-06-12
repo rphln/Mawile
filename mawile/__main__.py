@@ -18,7 +18,7 @@ from mawile.dense import DenseQPlayer, init_default_model
 from mawile.players import MemoryPlayer
 
 LOG_LEVEL = os.environ.get("LOG_LEVEL", logging.WARNING)
-MODEL_PATH = os.environ.get("MODEL_PATH", "var/checkpoint")
+MODEL_PATH = os.environ.get("MODEL_PATH", "var/checkpoint.keras")
 
 GAMMA = 0.95
 BATCH_SIZE = 50_000
