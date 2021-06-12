@@ -71,7 +71,14 @@ class DenseQPlayer(MemoryPlayer[np.array, np.array]):
         Player.__init__(self, max_concurrent_battles=0)
 
     def battle_to_score(self, battle: AbstractBattle) -> float:
-        return reward_computing_helper(battle)
+        return reward_computing_helper(
+            battle,
+            weight_victory=1.0,
+            weight_fainted=0.0,
+            weight_health=0.0,
+            weight_status=0.0,
+            weight_boosts=0.0,
+        )
 
     def battle_to_state(self, battle: AbstractBattle) -> np.array:
         moves = encode_moves(battle.available_moves, battle.opponent_active_pokemon)
