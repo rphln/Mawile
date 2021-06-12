@@ -10,6 +10,7 @@ os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
 import numpy as np
 from poke_env.player.random_player import RandomPlayer
 from poke_env.player.utils import cross_evaluate
+from sklearn.metrics import r2_score
 from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
 
 from mawile.dense import DenseQPlayer, init_default_model
@@ -96,6 +97,8 @@ async def main():
 
         x, y = memory_to_dataset(shared_model, shared_memory)
         shared_model.fit(x, y, epochs=100, callbacks=[checkpoint, early_stop])
+
+        print(f"{r2_score(y, shared_model.predict(x))=}")
 
 
 if __name__ == "__main__":
