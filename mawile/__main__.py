@@ -123,7 +123,7 @@ async def main():
         pprint(statistics)
 
         x_train, y_train = memory_to_dataset(shared_model, shared_memory)
-        shared_model.fit(x_train, y_train, callbacks=[checkpoint_callback])
+        shared_model.fit(x_train, y_train, epochs=10, callbacks=[checkpoint_callback])
 
 
 if __name__ == "__main__":
