@@ -2,7 +2,7 @@
 profile = "black"
 
 [tool.poetry]
-name = "pokeai"
+name = "mawile"
 version = "0.1.0"
 description = ""
 authors = ["Raphael Nepomuceno <58113327+rphln@users.noreply.github.com>"]
@@ -12,7 +12,7 @@ license = "MIT"
 python = "^3.8"
 poke-env = "^0.4.15"
 scikit-learn = "^0.24.2"
-tensorflow = "^2.5.0"
+tensorflow-gpu = "^2.5.0"
 
 [tool.poetry.dev-dependencies]
 black = {version = "^21.5b2", allow-prereleases = true}
