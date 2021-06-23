@@ -5,19 +5,15 @@ from collections import Counter, defaultdict
 from pprint import pprint
 from typing import Tuple
 
-os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
-
 import numpy as np
 from poke_env.player.random_player import RandomPlayer
 from poke_env.player.utils import cross_evaluate
 from sklearn.metrics import r2_score
-from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
 
-from mawile.dense import DenseQPlayer, init_default_model
+from mawile.gbm import GradientBoostingPlayer, init_default_model
 from mawile.players import NaivePlayer, forget, memory_to_transitions
 
 LOG_LEVEL = os.environ.get("LOG_LEVEL", logging.WARNING)
-MODEL_PATH = os.environ.get("MODEL_PATH", "var/checkpoint.keras")
 
 GAMMA = 0.95
 BATCH_SIZE = 50_000
@@ -60,23 +56,13 @@ async def main():
     shared_memory = defaultdict(list)
     shared_model = init_default_model()
 
-    try:
-        shared_model.load_weights(MODEL_PATH)
-    except:
-        print("Using a fresh model.")
-    else:
-        print("Using the saved model.")
-
-    checkpoint = ModelCheckpoint(MODEL_PATH, save_weights_only=True)
-    early_stop = EarlyStopping(monitor="loss", patience=5)
-
     players = [
         NaivePlayer(max_concurrent_battles=0),
-        DenseQPlayer(shared_memory, shared_model),
-        DenseQPlayer(shared_memory, shared_model),
-        DenseQPlayer(shared_memory, shared_model),
-        DenseQPlayer(shared_memory, shared_model),
-        DenseQPlayer(shared_memory, shared_model),
+        GradientBoostingPlayer(shared_memory, shared_model),
+        GradientBoostingPlayer(shared_memory, shared_model),
+        GradientBoostingPlayer(shared_memory, shared_model),
+        GradientBoostingPlayer(shared_memory, shared_model),
+        GradientBoostingPlayer(shared_memory, shared_model),
         RandomPlayer(max_concurrent_battles=0),
     ]
 
@@ -96,7 +82,7 @@ async def main():
         pprint(statistics)
 
         x, y = memory_to_dataset(shared_model, shared_memory)
-        shared_model.fit(x, y, epochs=100, callbacks=[checkpoint, early_stop])
+        shared_model.fit(x, y)
 
         print(f"{r2_score(y, shared_model.predict(x))=}")
 

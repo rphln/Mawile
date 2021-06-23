@@ -106,16 +106,7 @@ def encode_move(move: Optional[Move], opponent: Pokemon) -> np.array:
     """
 
     (name,) = encode_move_names([move.id if move else None])
-
-    if move:
-        power = move.base_power
-        accuracy = move.accuracy
-
-        multiplier = move.type.damage_multiplier(opponent.type_1, opponent.type_2)
-    else:
-        power, accuracy, multiplier = 0.0, 1.0, 1.0
-
-    return np.hstack((name, power, accuracy, multiplier))
+    return name
 
 
 def encode_moves(moves: Iterable[Move], opponent: Pokemon, count: int = 4) -> np.array:
@@ -123,5 +114,6 @@ def encode_moves(moves: Iterable[Move], opponent: Pokemon, count: int = 4) -> np
     Converts a sequence of moves to a multi-dimensional array representation.
     """
 
-    moves = [encode_move(move, opponent) for move in pad(moves, to_length=count)]
-    return np.hstack(moves).flatten()
+    return encode_move_names(
+        [move.id if move else None for move in pad(moves, to_length=count)]
+    )
