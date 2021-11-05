@@ -13,10 +13,12 @@ from mawile.players import MemoryPlayer, TAction
 
 
 def init_default_model():
-    model = MultiOutputRegressor(GradientBoostingRegressor())
+    model = MultiOutputRegressor(
+        GradientBoostingRegressor(max_depth=22, max_features="log2", verbose=1)
+    )
     model.fit(
-        np.zeros((2, GradientBoostingPlayer.INPUT_SIZE)),
-        np.zeros((2, GradientBoostingPlayer.ACTION_SPACE)),
+        np.random.randn(2, GradientBoostingPlayer.INPUT_SIZE),
+        np.random.randn(2, GradientBoostingPlayer.ACTION_SPACE),
     )
 
     return model
